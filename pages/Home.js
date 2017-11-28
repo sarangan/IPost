@@ -7,17 +7,56 @@ import {
   Platform,
   StyleSheet,
   Text,
-  View
+  View,
+  TouchableHighlight,
+  Image
 } from 'react-native';
 
-const instructions = Platform.select({
-  ios: 'Press Cmd+R to reload,\n' +
-    'Cmd+D or shake for dev menu',
-  android: 'Double tap R on your keyboard to reload,\n' +
-    'Shake or press menu button for dev menu',
-});
 
 export default class Home extends Component<{}> {
+
+
+  constructor(props){
+    super(props);
+
+    this.state = {};
+
+  }
+
+  addPost = () => {
+
+    // this.props.navigator.push({
+    //   screen: 'IPost.UserProfile',
+    //   title: 'Create Account',
+    //   animated: true,
+    //   //animationType: 'fade',
+    //   backButtonTitle: "Back",
+    //   passProps: {}
+    // });
+
+    this.props.navigator.showModal({
+        screen: "IPost.CreatePost",
+        title: "",
+        animationType: 'slide-up',
+       navigatorStyle:{
+         navBarTextColor: '#6875E4',
+         navBarButtonColor: '#6875E4',
+         navBarBackgroundColor: '#FFFFFF',//'#839BF0',
+         screenBackgroundColor: '#FFFFFF',
+         navBarBlur: false,
+          screenBackgroundColor: '#FFFFFF',
+          navBarTransparent: false,
+       },
+        passProps: {
+
+        },
+    });
+
+
+  }
+
+
+
   render() {
     return (
       <View style={styles.container}>
@@ -27,9 +66,13 @@ export default class Home extends Component<{}> {
         <Text style={styles.instructions}>
           To get started, edit App.js
         </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+
+        <TouchableHighlight style={styles.roundBox} underlayColor='#AA9BFC' onPress={()=>this.addPost()}>
+          <Image
+            source={require('../images/write.png')}
+            style = {styles.genIcons}
+          />
+        </TouchableHighlight>
       </View>
     );
   }
@@ -52,4 +95,23 @@ const styles = StyleSheet.create({
     color: '#333333',
     marginBottom: 5,
   },
+  roundBox:{
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: '#6875E4',
+    marginRight: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: '5%',
+    right: '2%'
+  },
+  genIcons:{
+    width: 22,
+    height: 22,
+    resizeMode: 'contain',
+    alignSelf: 'center',
+  },
+
 });

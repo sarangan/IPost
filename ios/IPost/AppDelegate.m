@@ -32,13 +32,13 @@
   self.window.backgroundColor = [UIColor whiteColor];
   [[RCCManager sharedInstance] initBridgeWithBundleURL:jsCodeLocation launchOptions:launchOptions];
   
-  [[UIApplication sharedApplication] setStatusBarStyle:
-   UIStatusBarStyleLightContent];
+//  [[UIApplication sharedApplication] setStatusBarStyle:
+//   UIStatusBarStyleLightContent];
 
   /*RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"IPost"
                                                initialProperties:nil
-                                                   launchOptions:launchOptions];
+                                                   launchOptions:launchOptions];r
   rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];

@@ -3,6 +3,7 @@ package com.learning.open.ipost;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.reactnative.ivpusic.imagepicker.PickerPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -46,6 +47,7 @@ public class MainApplication extends NavigationApplication {
     //   protected List<ReactPackage> getPackages() {
     //     return Arrays.<ReactPackage>asList(
     //         new MainReactPackage(),
+            new PickerPackage(),
             new ImagePickerPackage()
     //     );
     //   }

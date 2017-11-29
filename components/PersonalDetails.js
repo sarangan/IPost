@@ -38,22 +38,26 @@ export default class PersonalDetails extends Component<{}> {
 
             <TextInput
               style={styles.txtInput}
-              onChangeText={(text) => this.setState({first_name:text})}
+              onChangeText={(text) =>  this.props.handleInputChange("first_name", text ) }
+              name="first_name"
               placeholder="First name"
               placeholderTextColor="#A9ACBC"
               ref={component => this.first_name = component}
               underlineColorAndroid='transparent'
+              value={this.props.first_name}
             />
 
              <View style={styles.divider}></View>
 
              <TextInput
                style={styles.txtInput}
-               onChangeText={(text) => this.setState({last_name:text})}
+                 onChangeText={(text) =>  this.props.handleInputChange("last_name", text ) }
+               name="last_name"
                placeholder="Last name"
                placeholderTextColor="#A9ACBC"
                ref={component => this.last_name = component}
                underlineColorAndroid='transparent'
+               value={this.props.last_name}
              />
 
               <View style={styles.divider}></View>
@@ -61,11 +65,13 @@ export default class PersonalDetails extends Component<{}> {
 
              <TextInput
                style={styles.txtInput}
-               onChangeText={(text) => this.setState({contact:text})}
+                 onChangeText={(text) =>  this.props.handleInputChange("contact", text ) }
+               name="contact"
                placeholder="Contact"
                placeholderTextColor="#A9ACBC"
                ref={component => this.contact = component}
                underlineColorAndroid='transparent'
+               value={this.props.contact}
              />
 
               <View style={styles.divider}></View>

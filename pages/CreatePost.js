@@ -23,8 +23,7 @@ const SCREENHEIGHT = Dimensions.get('window').height;
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
-var ImagePicker = require('react-native-image-picker');
-
+import ImagePicker from 'react-native-image-crop-picker';
 
 import * as UserActions from "../actions/UserActions";
 import UserStore from "../stores/UserStore";
@@ -36,19 +35,11 @@ export default class UserProfile extends Component<{}> {
   static navigatorButtons = {
      rightButtons: [
        {
-         title: 'Post',
-         id: 'post'
+         title: 'Cancel',
+         id: 'cancel'
        }
      ],
-      leftButtons:[
-        {
-          title: 'Cancel',
-          id: 'cancel'
-        }
-      ]
-
    };
-
 
 
   constructor(props){
@@ -56,8 +47,11 @@ export default class UserProfile extends Component<{}> {
     this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
 
     this.state = {
-
-
+      body: '',
+      type: 1,
+      img_url: '',
+      got_img: 0,
+      loading: false
     };
 
   }
@@ -65,11 +59,7 @@ export default class UserProfile extends Component<{}> {
   //navigator button actions
   onNavigatorEvent(event) {
     if (event.type == 'NavBarButtonPress') {
-      if (event.id == 'post') {
-        this.doSave();
-
-      }
-      else if(event.id == 'cancel'){
+      if(event.id == 'cancel'){
 
         this.props.navigator.dismissModal({
           animationType: 'slide-down'
@@ -81,14 +71,11 @@ export default class UserProfile extends Component<{}> {
   }
 
   componentWillUnmount () {
-    // Remove the alert located on this master page from te manager
     MessageBarManager.unregisterMessageBar();
  }
 
   componentDidMount(){
-
     MessageBarManager.registerMessageBar(this.refs.alert);
-
   }
 
   doMessage = (msg) =>{
@@ -112,55 +99,84 @@ export default class UserProfile extends Component<{}> {
   doSave = () =>{
 
 
-
   }
 
   //open camera
   openCamera = () =>{
-    var options = {
-      title: 'Add media',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images'
-      },
-      //allowsEditing: true
-    };
 
-      ImagePicker.showImagePicker(options, (response) => {
-        console.log('Response = ', response);
-
-        if (response.didCancel) {
-          console.log('User cancelled image picker');
-        }
-        else if (response.error) {
-          console.log('ImagePicker Error: ', response.error);
-        }
-        else if (response.customButton) {
-          //console.log('User tapped custom button: ', response.customButton);
-        }
-        else {
-
-          this.setState({
-            img_url: response.uri,
-            type: 2
-          });
-
-        }
+      ImagePicker.openCamera({
+        width: 500,
+        height: 500,
+        cropping: false
+      }).then(image => {
+        console.log(image);
+        this.setState({
+          img_url: image.path,
+          got_img: 1,
+        });
       });
 
   }
 
 
+  openPhotoLib = () =>{
+
+    ImagePicker.openPicker({
+      width: 500,
+      height: 500,
+      cropping: false
+      }).then(image => {
+        console.log(image);//
+        this.setState({
+          img_url: image.path,
+          got_img: 1,
+        });
+    });
+
+  }
+
+  // remove image from state
+  DeleteImg = () =>{
+    this.setState({
+      img_url: '',
+      got_img: 0,
+    });
+  }
 
   getImage = () =>{
     let img = null;
     if(this.state.img_url){
       img = <Image source={{ uri: this.state.img_url }} style={{width: SCREENWIDTH, height: SCREENWIDTH * 0.75, resizeMode: 'cover'}}>
-
       </Image>
     }
 
     return (img);
+  }
+
+  getClearBtn = () =>{
+    let img = null;
+
+    if(this.state.got_img){
+      img = <TouchableHighlight style={
+          {
+            flex:0,
+            padding: 5,
+            position: 'absolute',
+            top: '5%',
+            right: '2%'
+          }
+        }
+        underlayColor='transparent' onPress={()=>this.DeleteImg()}>
+        <Image
+          source={require('../images/close.png')}
+          style = {{width: 20, height: 20, resizeMode: 'contain',}}
+        />
+      </TouchableHighlight>
+
+    }
+
+    return (img);
+
   }
 
 
@@ -171,7 +187,7 @@ export default class UserProfile extends Component<{}> {
 
           <TextInput
             style={[styles.txtInput, {height: SCREENHEIGHT - 400}]}
-            onChangeText={(text) => this.setState({comment:text, startEdit: true})}
+            onChangeText={(text) => this.setState({body:text})}
             placeholder="What are you thinking about?"
             placeholderTextColor="#A9ACBC"
             multiline = {true}
@@ -182,18 +198,43 @@ export default class UserProfile extends Component<{}> {
 
           <View style={styles.camWrapper}>
               {this.getImage()}
+              { this.getClearBtn()}
+
           </View>
 
         </ScrollView>
 
         <MessageBarAlert ref='alert' />
 
-        <TouchableHighlight style={styles.roundBox} underlayColor='#AA9BFC' onPress={()=>this.openCamera()}>
-          <Image
-            source={require('../images/photo-camera.png')}
-            style = {styles.genIcons}
-          />
-        </TouchableHighlight>
+        <View style={{
+          flex: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', height: 15, backgroundColor: '#F7F7F9', width: SCREENWIDTH,
+          padding: 20,
+        }}>
+
+          <View style={{flex: 0, flexDirection: 'row', width: 60, alignItems: 'center', justifyContent: 'flex-start', }}>
+
+              <TouchableHighlight underlayColor="transparent" style={{flex: 0, alignSelf: 'flex-start'}} onPress={()=>this.openPhotoLib()}>
+                <Image
+                  source={require('../images/photos-lib.png')}
+                  style = {{width: 30, height: 30, resizeMode: 'contain', }}
+                />
+              </TouchableHighlight>
+
+              <TouchableHighlight underlayColor="transparent" style={{flex: 0, alignSelf: 'flex-start'}} onPress={()=>this.openCamera()}>
+                <Image
+                  source={require('../images/camera.png')}
+                  style = {{width: 30, height: 30, resizeMode: 'contain', }}
+                />
+              </TouchableHighlight>
+
+          </View>
+
+
+            <TouchableHighlight style={{ flex: 0, backgroundColor: '#6875E4', borderRadius: 3, padding: 8, width: 70 }}><Text style={{color:'#ffffff', fontWeight: 'bold', textAlign: 'center' }}>Post</Text></TouchableHighlight>
+
+
+        </View>
+
 
       </View>
     );

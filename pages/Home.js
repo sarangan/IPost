@@ -9,9 +9,12 @@ import {
   Text,
   View,
   TouchableHighlight,
-  Image
+  Image,
+  AsyncStorage
 } from 'react-native';
 
+import auth from '../auth/auth';
+import AppKeys from '../keys/appKeys';
 
 export default class Home extends Component<{}> {
 
@@ -19,9 +22,75 @@ export default class Home extends Component<{}> {
   constructor(props){
     super(props);
 
-    this.state = {};
+    this.state = {
+
+    };
 
   }
+
+  componentWillMount(){
+
+    // let keys = [AppKeys.LOGINKEY];
+    // AsyncStorage.multiRemove(keys, (err) => {
+    //
+    // });
+    this.checkAuth();
+  }
+
+  checkAuth =()=>{
+
+   AsyncStorage.getItem(AppKeys.LOGINKEY, (err, result) => {
+     console.log('get login details');
+     console.log(JSON.parse(result));
+     if(result){
+       //user already saved in store
+       console.log('got something');
+       console.log(result);
+
+       let tempAuth = JSON.parse(result) || {};
+
+       if(tempAuth.hasOwnProperty("user") && tempAuth.hasOwnProperty("token") ){
+         auth["AUTHTOKEN"] = tempAuth.token;
+         auth["ISLOGIN"] =  true;
+         auth["USER"] =  tempAuth.user;
+
+
+       }
+       else{
+
+         this.props.navigator.showModal({
+             screen: "IPost.Login",
+             title: 'IPost',
+             animationType: 'slide-up',
+             navigatorStyle:{
+               navBarHidden: true,
+             },
+             passProps: {
+              }
+         });
+
+       }
+
+
+     }
+     else{
+       console.log("no login yet ");
+
+       this.props.navigator.showModal({
+           screen: "IPost.Login",
+           title: 'IPost',
+           animationType: 'slide-up',
+           navigatorStyle:{
+             navBarHidden: true,
+           },
+           passProps: {
+            }
+       });
+
+     }
+   });
+
+ }
 
   addPost = () => {
 

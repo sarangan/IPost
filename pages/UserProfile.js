@@ -23,8 +23,9 @@ const SCREENHEIGHT = Dimensions.get('window').height;
 var MessageBarAlert = require('react-native-message-bar').MessageBar;
 var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
-var ImagePicker = require('react-native-image-picker');
 
+var ImagePicker = require('react-native-image-picker');
+import config from '../config/config';
 
 import * as UserActions from "../actions/UserActions";
 import UserStore from "../stores/UserStore";
@@ -36,8 +37,8 @@ export default class UserProfile extends Component<{}> {
   static navigatorButtons = {
      rightButtons: [
        {
-         title: 'Save',
-         id: 'save'
+         title: 'Close',
+         id: 'cancel'
        }
      ],
     //  leftButtons:[
@@ -56,13 +57,16 @@ export default class UserProfile extends Component<{}> {
 
     this.state = {
       email: '',
-      encryptedPassword: '',
       password: '',
+      confirmPassword: '',
       username: '',
       first_name: '',
       last_name: '',
       contact: '',
-      img_url: ''
+      img_url: '',
+      got_img: 0,
+      loading: false,
+      error: ''
 
     };
 
@@ -71,17 +75,17 @@ export default class UserProfile extends Component<{}> {
   //navigator button actions
   onNavigatorEvent(event) {
     if (event.type == 'NavBarButtonPress') {
-      if (event.id == 'save') {
-        this.doSave();
-
-      }
-      // else if(event.id == 'cancel'){
-      //
-      //   this.props.navigator.dismissModal({
-      //     animationType: 'slide-down'
-      //   });
+      // if (event.id == 'save') {
+      //   this.doSave();
       //
       // }
+      if(event.id == 'cancel'){
+
+        this.props.navigator.dismissModal({
+          animationType: 'slide-down'
+        });
+
+      }
 
     }
   }
@@ -95,6 +99,19 @@ export default class UserProfile extends Component<{}> {
 
     MessageBarManager.registerMessageBar(this.refs.alert);
 
+  }
+
+  handleInputChange=(name, value)=>{
+
+     console.log(value);
+     console.log(name);
+
+
+     this.setState({
+         [name]: value
+     });
+
+     console.log(this.state);
   }
 
   doMessage = (msg, type) =>{
@@ -120,16 +137,120 @@ export default class UserProfile extends Component<{}> {
 
   doSave = () =>{
 
-    if(!this.state.email || !this.state.encryptedPassword || !this.state.password || !this.state.username){
+    if(!this.state.email || !this.state.password || !this.state.confirmPassword || !this.state.username){
       this.doMessage("Please provide details!", "ERROR");
     }
-    else if(this.state.encryptedPassword ==  this.state.password ){
+    else if(this.state.password !=  this.state.confirmPassword ){
       this.doMessage("Password does not match!");
     }
     else{
 
+      this.setState({
+        loading: true
+      }, ()=>{
+
+
+        let formData = new FormData();
+        formData.append("email", this.state.email);
+        formData.append("password", this.state.password);
+        formData.append("confirmPassword", this.state.confirmPassword);
+        formData.append("username", this.state.username);
+        formData.append("first_name", this.state.first_name);
+        formData.append("last_name", this.state.last_name);
+        formData.append("contact", this.state.contact);
+        formData.append("got_img", this.state.got_img);
+        if(this.state.got_img == 1){
+          formData.append('photo', {uri: this.state.img_url, type: 'image/jpg', name: 'image.jpg'});
+        }
+
+        fetch(
+            config.ENDPOINT_URL + 'auth/register',
+            {
+            method: 'POST',
+            headers: {
+                      'Accept': 'application/json',
+                      //'Content-Type': 'application/octet-stream',
+                      'Content-Type': 'multipart/form-data',
+                      'Origin': '',
+                      'Host': 'propertyground.co.uk',
+                      'timeout': 10 * 60
+            },
+            body: formData
+        })
+        .then((response) => response.json())
+        .then((responseJson) => {
+
+          console.log(responseJson);
+
+          if( responseJson.hasOwnProperty("status") && responseJson.status == 1 ){
+
+            this.doMessage("I-Post Account successfully created", "INFO");
+            // Alert.alert(
+            //   'I-Post',
+            //   'Please login to post a text!'
+            //  );
+
+
+            this.setState({
+              loading: false,
+              email: '',
+              password: '',
+              confirmPassword: '',
+              username: '',
+              first_name: '',
+              last_name: '',
+              contact: '',
+              img_url: '',
+              got_img: 0,
+              loading: false,
+              error: ''
+
+            }, ()=>{
+
+              Alert.alert(
+                'I-Post',
+                'Success!, Please login to post a text.',
+                [
+                  {text: 'OK', onPress: () => {
+                    console.log('OK Pressed');
+                    this.props.navigator.dismissModal({
+                      animationType: 'slide-down'
+                    });
+                    }
+                  },
+                ],
+                { cancelable: false }
+              )
+
+
+
+
+
+            } );
+
+            console.log('login success');
+
+          }
+          else{
+              this.doMessage("Could not update the details!", "ERROR");
+          }
+
+        })
+        .catch((error) => {
+          console.error(error);
+          this.doMessage("Error!", "ERROR");
+          this.setState({
+            loading: false,
+            error: error
+          });
+        });
+
+
+      });
+
+
     }
-    console.log("save");
+
 
   }
 
@@ -145,7 +266,7 @@ export default class UserProfile extends Component<{}> {
     };
 
       ImagePicker.showImagePicker(options, (response) => {
-        console.log('Response = ', response);
+        //console.log('Response = ', response);
 
         if (response.didCancel) {
           console.log('User cancelled image picker');
@@ -157,9 +278,11 @@ export default class UserProfile extends Component<{}> {
           //console.log('User tapped custom button: ', response.customButton);
         }
         else {
+          console.log(response.uri);
 
           this.setState({
-            img_url: response.uri
+            img_url: response.uri,
+            got_img: 1
           });
 
         }
@@ -210,17 +333,19 @@ export default class UserProfile extends Component<{}> {
             placeholderTextColor="#A9ACBC"
             ref={component => this.email = component}
             underlineColorAndroid='transparent'
+            keyboardType="email-address"
           />
 
            <View style={styles.divider}></View>
 
            <TextInput
              style={styles.txtInput}
-             onChangeText={(text) => this.setState({encryptedPassword:text})}
+             onChangeText={(text) => this.setState({password:text})}
              placeholder="Password"
              placeholderTextColor="#A9ACBC"
-             ref={component => this.encryptedPassword = component}
+             ref={component => this.password = component}
              underlineColorAndroid='transparent'
+             secureTextEntry= {true}
            />
 
             <View style={styles.divider}></View>
@@ -232,6 +357,7 @@ export default class UserProfile extends Component<{}> {
               placeholderTextColor="#A9ACBC"
               ref={component => this.confirmPassword = component}
               underlineColorAndroid='transparent'
+              secureTextEntry= {true}
             />
 
              <View style={styles.divider}></View>
@@ -245,7 +371,7 @@ export default class UserProfile extends Component<{}> {
                underlineColorAndroid='transparent'
              />
 
-            <PersonalDetails first_name={this.state.first_name} last_name={this.state.last_name} contact={this.state.contact}/>
+            <PersonalDetails first_name={this.state.first_name} last_name={this.state.last_name} contact={this.state.contact} handleInputChange={this.handleInputChange}/>
 
 
             <TouchableHighlight underlayColor='#AA9BFC'  onPress={()=>this.doSave()} style={styles.btnUpdate}>
@@ -254,6 +380,12 @@ export default class UserProfile extends Component<{}> {
 
         </ScrollView>
 
+
+        {this.state.loading &&
+          <View style={styles.overlayLoading}>
+            <ActivityIndicator animating  size='large' />
+          </View>
+        }
 
         <MessageBarAlert ref='alert' />
 
@@ -341,6 +473,17 @@ const styles = StyleSheet.create({
     margin: 30,
     alignItems: 'center',
     justifyContent: 'center'
-  }
+  },
+  overlayLoading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+    backgroundColor: 'rgba(131,155,240,0.5)'
+  },
 
 });

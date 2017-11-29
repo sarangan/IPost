@@ -7,7 +7,9 @@ import { Navigation } from 'react-native-navigation';
 import Home from './pages/Home';
 import UserProfile from './pages/UserProfile';
 import CreatePost from './pages/CreatePost';
+import Login from './pages/Login';
 
+Navigation.registerComponent('IPost.Login', () => Login);
 Navigation.registerComponent('IPost.Home', () => Home);
 Navigation.registerComponent('IPost.UserProfile', () => UserProfile);
 Navigation.registerComponent('IPost.CreatePost', () => CreatePost);

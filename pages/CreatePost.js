@@ -25,9 +25,14 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 import ImagePicker from 'react-native-image-crop-picker';
 
-import * as UserActions from "../actions/UserActions";
-import UserStore from "../stores/UserStore";
-import PersonalDetails from "../components/PersonalDetails";
+import config from '../config/config';
+import AppKeys from '../keys/appKeys';
+import auth from '../auth/auth';
+
+
+import * as PostActions from "../actions/PostActions";
+import PostStore from "../stores/PostStore";
+
 
 
 export default class UserProfile extends Component<{}> {
@@ -54,6 +59,8 @@ export default class UserProfile extends Component<{}> {
       loading: false
     };
 
+    this.getPostStatus = this.getPostStatus.bind(this);
+
   }
 
   //navigator button actions
@@ -70,25 +77,52 @@ export default class UserProfile extends Component<{}> {
     }
   }
 
+  componentWillMount() {
+    PostStore.on("change", this.getPostStatus);
+  }
+
   componentWillUnmount () {
     MessageBarManager.unregisterMessageBar();
- }
+    PostStore.removeListener("change", this.getPostStatus);
+  }
+
+  // check the post text status
+  getPostStatus(){
+
+   let status = PostStore.getPostStatus();
+
+   if(status){
+     this.setState({
+       loading: false,
+       body: '',
+       got_img: 0,
+       img_url: ''
+     }, ()=>{
+       this.doMessage("I-Post successfully posted", "INFO");
+     });
+     
+   }
+
+  }
 
   componentDidMount(){
     MessageBarManager.registerMessageBar(this.refs.alert);
   }
 
-  doMessage = (msg) =>{
-
+  doMessage = (msg, type) =>{
+    let myStyle = { backgroundColor : '#FAE07F', strokeColor : '#FAE07F' };
+    if(type == "INFO"){
+      myStyle = { backgroundColor : '#A1DBB5', strokeColor : '#A1DBB5' };
+    }
     MessageBarManager.showAlert({
           message: msg,
           alertType: 'success',
           animationType: 'SlideFromTop',
           position: 'top',
           shouldHideOnTap: true,
-          stylesheetSuccess : { backgroundColor : '#ea5c5c', strokeColor : '#ea5c5c' },
+          stylesheetSuccess : myStyle,
           messageStyle: {color: '#ffffff', fontWeight: '700', fontSize: 15 },
-          duration: 700,
+          duration: 1400,
           durationToShow: 0,
           durationToHide: 300
 
@@ -98,6 +132,12 @@ export default class UserProfile extends Component<{}> {
 
   doSave = () =>{
 
+    if(!this.state.body){
+      this.doMessage("Please text body!", "ERROR");
+    }
+    else{
+      PostActions.postText(this.state.body, this.state.img_url, this,state.got_img);
+    }
 
   }
 

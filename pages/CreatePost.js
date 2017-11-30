@@ -35,7 +35,7 @@ import PostStore from "../stores/PostStore";
 
 
 
-export default class UserProfile extends Component<{}> {
+export default class CreatePost extends Component<{}> {
 
   static navigatorButtons = {
      rightButtons: [
@@ -55,7 +55,6 @@ export default class UserProfile extends Component<{}> {
       body: '',
       type: 1,
       img_url: '',
-      got_img: 0,
       loading: false
     };
 
@@ -86,28 +85,30 @@ export default class UserProfile extends Component<{}> {
     PostStore.removeListener("change", this.getPostStatus);
   }
 
+  componentDidMount(){
+    MessageBarManager.registerMessageBar(this.refs.alert);
+  }
+
   // check the post text status
   getPostStatus(){
 
    let status = PostStore.getPostStatus();
 
-   if(status){
+   if(status){ // is posted 
      this.setState({
        loading: false,
        body: '',
-       got_img: 0,
+       type: 1,
        img_url: ''
      }, ()=>{
-       this.doMessage("I-Post successfully posted", "INFO");
+       this.doMessage("Successfully posted", "INFO");
      });
-     
+
    }
 
   }
 
-  componentDidMount(){
-    MessageBarManager.registerMessageBar(this.refs.alert);
-  }
+
 
   doMessage = (msg, type) =>{
     let myStyle = { backgroundColor : '#FAE07F', strokeColor : '#FAE07F' };
@@ -130,13 +131,20 @@ export default class UserProfile extends Component<{}> {
 
   }
 
-  doSave = () =>{
+  doPost = () =>{
 
     if(!this.state.body){
-      this.doMessage("Please text body!", "ERROR");
+      this.doMessage("Please provide text body!", "ERROR");
     }
     else{
-      PostActions.postText(this.state.body, this.state.img_url, this,state.got_img);
+
+      this.setState({
+        loading: true,
+
+      }, ()=>{
+        PostActions.postText(this.state.body, this.state.img_url, this.state.type);
+      });
+
     }
 
   }
@@ -152,7 +160,7 @@ export default class UserProfile extends Component<{}> {
         console.log(image);
         this.setState({
           img_url: image.path,
-          got_img: 1,
+          type: 2,
         });
       });
 
@@ -169,7 +177,7 @@ export default class UserProfile extends Component<{}> {
         console.log(image);//
         this.setState({
           img_url: image.path,
-          got_img: 1,
+          type: 2,
         });
     });
 
@@ -179,7 +187,7 @@ export default class UserProfile extends Component<{}> {
   DeleteImg = () =>{
     this.setState({
       img_url: '',
-      got_img: 0,
+      type: 1,
     });
   }
 
@@ -196,7 +204,7 @@ export default class UserProfile extends Component<{}> {
   getClearBtn = () =>{
     let img = null;
 
-    if(this.state.got_img){
+    if(this.state.type == 2){
       img = <TouchableHighlight style={
           {
             flex:0,
@@ -246,34 +254,40 @@ export default class UserProfile extends Component<{}> {
 
         <MessageBarAlert ref='alert' />
 
-        <View style={{
-          flex: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', height: 15, backgroundColor: '#F7F7F9', width: SCREENWIDTH,
-          padding: 20,
-        }}>
+            <View style={{
+              flex: 0, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', height: 15, backgroundColor: '#F7F7F9', width: SCREENWIDTH,
+              padding: 20,
+            }}>
 
-          <View style={{flex: 0, flexDirection: 'row', width: 60, alignItems: 'center', justifyContent: 'flex-start', }}>
+              <View style={{flex: 0, flexDirection: 'row', width: 60, alignItems: 'center', justifyContent: 'flex-start', }}>
 
-              <TouchableHighlight underlayColor="transparent" style={{flex: 0, alignSelf: 'flex-start'}} onPress={()=>this.openPhotoLib()}>
-                <Image
-                  source={require('../images/photos-lib.png')}
-                  style = {{width: 30, height: 30, resizeMode: 'contain', }}
-                />
-              </TouchableHighlight>
+                  <TouchableHighlight underlayColor="transparent" style={{flex: 0, alignSelf: 'flex-start'}} onPress={()=>this.openPhotoLib()}>
+                    <Image
+                      source={require('../images/photos-lib.png')}
+                      style = {{width: 30, height: 30, resizeMode: 'contain', }}
+                    />
+                  </TouchableHighlight>
 
-              <TouchableHighlight underlayColor="transparent" style={{flex: 0, alignSelf: 'flex-start'}} onPress={()=>this.openCamera()}>
-                <Image
-                  source={require('../images/camera.png')}
-                  style = {{width: 30, height: 30, resizeMode: 'contain', }}
-                />
-              </TouchableHighlight>
+                  <TouchableHighlight underlayColor="transparent" style={{flex: 0, alignSelf: 'flex-start'}} onPress={()=>this.openCamera()}>
+                    <Image
+                      source={require('../images/camera.png')}
+                      style = {{width: 30, height: 30, resizeMode: 'contain', }}
+                    />
+                  </TouchableHighlight>
 
-          </View>
+              </View>
 
+                <TouchableHighlight style={{ flex: 0, backgroundColor: '#6875E4', borderRadius: 3, padding: 8, width: 70 }} onPress={()=>this.doPost()}>
+                  <Text style={{color:'#ffffff', fontWeight: 'bold', textAlign: 'center' }}>Post</Text>
+                </TouchableHighlight>
 
-            <TouchableHighlight style={{ flex: 0, backgroundColor: '#6875E4', borderRadius: 3, padding: 8, width: 70 }}><Text style={{color:'#ffffff', fontWeight: 'bold', textAlign: 'center' }}>Post</Text></TouchableHighlight>
+            </View>
 
-
-        </View>
+            {this.state.loading &&
+              <View style={styles.overlayLoading}>
+                <ActivityIndicator animating  size='large' />
+              </View>
+            }
 
 
       </View>
@@ -333,6 +347,17 @@ const styles = StyleSheet.create({
   camera_img:{
     width: 120,
     resizeMode: "contain",
+  },
+  overlayLoading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+    backgroundColor: 'rgba(131,155,240,0.5)'
   },
 
 });

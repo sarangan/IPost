@@ -53,6 +53,8 @@ export default class Login extends Component<{}> {
     LoginStore.removeListener("change", this.getLoginStatus);
   }
 
+
+  // login response 
   getLoginStatus(){
 
     let responseJson = LoginStore.getLoginDetails();
@@ -83,7 +85,6 @@ export default class Login extends Component<{}> {
 
       console.log("ipauth");
       console.log(ipauth);
-      console.log("-------------------");
 
 
       AsyncStorage.setItem(AppKeys.LOGINKEY, JSON.stringify(ipauth), () => {

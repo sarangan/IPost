@@ -15,6 +15,9 @@
 		"react-native-image-picker": "^0.26.7",
 		"react-native-message-bar": "^2.0.6",
 		"react-native-navigation": "^1.1.295",
+		"react-native-parallax-scroll-view": "^0.20.1",
+		"react-native-swiper": "^1.5.13",
+		"react-native-transformable-image": "0.0.18",
 		"react-timer-mixin": "^0.13.3"
 	},
 	"devDependencies": {

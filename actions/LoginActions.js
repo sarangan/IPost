@@ -36,10 +36,7 @@ export function authenticate(username, password) {
     .catch((error) => {
         console.error(error);
 
-        this.setState({
-          isSending: false
-        });
-
+        
     });
 
 }

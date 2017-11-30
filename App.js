@@ -8,11 +8,23 @@ import Home from './pages/Home';
 import UserProfile from './pages/UserProfile';
 import CreatePost from './pages/CreatePost';
 import Login from './pages/Login';
+import Profile from './pages/Profile';
+import EditProfile from './pages/EditProfile';
+import About from './pages/About';
+import ImageLightBox from './components/ImageLightBox';
+import Drawer from './components/Drawer';
 
 Navigation.registerComponent('IPost.Login', () => Login);
 Navigation.registerComponent('IPost.Home', () => Home);
+Navigation.registerComponent('IPost.Profile', () => Profile);
+Navigation.registerComponent('IPost.EditProfile', () => EditProfile);
 Navigation.registerComponent('IPost.UserProfile', () => UserProfile);
 Navigation.registerComponent('IPost.CreatePost', () => CreatePost);
+Navigation.registerComponent('IPost.ImageLightBox', ()=> ImageLightBox);
+Navigation.registerComponent('IPost.Drawer', () => Drawer);
+Navigation.registerComponent('IPost.About', () => About);
+
+
 
 
 const navigatorStyle = {
@@ -39,16 +51,16 @@ const navigatorStyle = {
     screen: {
       screen: 'IPost.Home',
       animated: true,
-      title: 'Ipost',
+      title: 'I-Post',
       navigatorStyle
     },
-    // drawer: {
-  	// 	left: {
-  	// 		screen: 'Snappar.Drawer'
-  	// 	},
-    //   style: {
-    //     drawerShadow: 'NO'
-    //   },
-    //   disableOpenGesture: true,
-  	// }
+    drawer: {
+  		left: {
+  			screen: 'IPost.Drawer'
+  		},
+      style: {
+        drawerShadow: 'NO'
+      },
+      disableOpenGesture: true,
+  	}
   });

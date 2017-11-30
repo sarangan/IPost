@@ -15,6 +15,7 @@ import {
   Image,
   Alert,
   ActivityIndicator,
+  AsyncStorage
 } from 'react-native';
 
 const SCREENWIDTH = Dimensions.get('window').width;
@@ -31,76 +32,39 @@ import PersonalDetails from "../components/PersonalDetails";
 import * as UserActions from "../actions/UserActions";
 import UserStore from "../stores/UserStore";
 
+import auth from '../auth/auth';
 
+export default class EditProfile extends Component<{}> {
 
-export default class UserProfile extends Component<{}> {
-
-  static navigatorButtons = {
-     rightButtons: [
-       {
-         title: 'Close',
-         id: 'cancel'
-       }
-     ],
-    //  leftButtons:[
-    //    {
-    //      title: 'Cancel',
-    //      id: 'cancel'
-    //    }
-    //  ]
-
-   };
 
 
   constructor(props){
     super(props);
-    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
 
     this.state = {
-      email: '',
-      password: '',
-      confirmPassword: '',
-      username: '',
-      first_name: '',
-      last_name: '',
-      contact: '',
-      img_url: '',
+      first_name: auth.USER.first_name,
+      last_name: auth.USER.last_name,
+      contact: auth.USER.contact,
+      img_url: auth.USER.img_url,
       got_img: 0,
       loading: false,
       error: ''
 
     };
 
-    this.getRegisterStatus = this.getRegisterStatus.bind(this);
+    this.getUpdateProfileStatus = this.getUpdateProfileStatus.bind(this);
 
   }
 
-  //navigator button actions
-  onNavigatorEvent(event) {
-    if (event.type == 'NavBarButtonPress') {
-      // if (event.id == 'save') {
-      //   this.doSave();
-      //
-      // }
-      if(event.id == 'cancel'){
-
-        this.props.navigator.dismissModal({
-          animationType: 'slide-down'
-        });
-
-      }
-
-    }
-  }
 
 
   componentWillMount() {
-    UserStore.on("change", this.getRegisterStatus);
+    UserStore.on("change", this.getUpdateProfileStatus);
   }
 
   componentWillUnmount () {
     MessageBarManager.unregisterMessageBar();
-    UserStore.removeListener("change", this.getRegisterStatus);
+    UserStore.removeListener("change", this.getUpdateProfileStatus);
   }
 
   componentDidMount(){
@@ -110,9 +74,6 @@ export default class UserProfile extends Component<{}> {
   }
 
   handleInputChange=(name, value)=>{
-
-     console.log(value);
-     console.log(name);
 
 
      this.setState({
@@ -146,21 +107,14 @@ export default class UserProfile extends Component<{}> {
   // check register user status response
   getRegisterStatus(){
 
-   let responseJson = UserStore.getRegisterStatus();
+   let responseJson = UserStore.getUpdateProfileStatus();
 
    if( responseJson.hasOwnProperty("status") && responseJson.status == 1 ){
 
-     this.doMessage("I-Post Account successfully created", "INFO");
+     this.doMessage("I-Post profile successfully updated", "INFO");
 
      this.setState({
        loading: false,
-       email: '',
-       password: '',
-       confirmPassword: '',
-       username: '',
-       first_name: '',
-       last_name: '',
-       contact: '',
        img_url: '',
        got_img: 0,
        loading: false,
@@ -168,20 +122,70 @@ export default class UserProfile extends Component<{}> {
 
      }, ()=>{
 
-       Alert.alert(
-         'I-Post',
-         'Success!, Please login to post a text.',
-         [
-           {text: 'OK', onPress: () => {
-             console.log('OK Pressed');
-             this.props.navigator.dismissModal({
-               animationType: 'slide-down'
+
+       AsyncStorage.getItem(AppKeys.LOGINKEY, (err, result) => {
+         console.log('get login details');
+         console.log(JSON.parse(result));
+         if(result){
+           //user already saved in store
+           console.log('got something');
+           console.log(result);
+
+           let tempAuth = JSON.parse(result) || {};
+
+           if(tempAuth.hasOwnProperty("user") && tempAuth.hasOwnProperty("token") ){
+             auth["AUTHTOKEN"] = tempAuth.token;
+             auth["ISLOGIN"] =  true;
+             auth["USER"] =  tempAuth.user;
+
+             console.log('auth');
+             console.log(auth);
+
+             let userDetails = {
+                 user_id : tempAuth.user.id,
+                 email :  tempAuth.user.email,
+                 img_url : config.SERVER_IMAGE_PATH + 'users/'+ responseJson.user.img_url,
+                 thumb_url: config.SERVER_IMAGE_PATH + 'users/300_'+ responseJson.user.img_url,
+                 first_name : responseJson.user.first_name,
+                 last_name : responseJson.user.last_name,
+                 contact : responseJson.user.contact,
+             };
+
+             auth["AUTHTOKEN"] = 'Bearer ' + responseJson.token;
+             auth["ISLOGIN"] =  true;
+             auth["USER"] =  userDetails;
+
+             let ipauth = {
+               token: 'Bearer ' + responseJson.token,
+               isLogin: true,
+               user: userDetails
+             };
+
+             console.log("ipauth");
+             console.log(ipauth);
+
+
+             AsyncStorage.setItem(AppKeys.LOGINKEY, JSON.stringify(ipauth), () => {
+               console.log('login token stored');
+
+               this.setState({
+                 isSending: false
+               });
+
+               this.props.navigator.dismissModal({
+                 animationType: 'slide-down'
+               });
+
              });
-             }
-           },
-         ],
-         { cancelable: false }
-       )
+
+
+
+           }
+         }
+
+         });
+
+
 
 
      } );
@@ -199,11 +203,8 @@ export default class UserProfile extends Component<{}> {
 
   doSave = () =>{
 
-    if(!this.state.email || !this.state.password || !this.state.confirmPassword || !this.state.username){
+    if(!this.state.first_name || !this.state.last_name){
       this.doMessage("Please provide details!", "ERROR");
-    }
-    else if(this.state.password !=  this.state.confirmPassword ){
-      this.doMessage("Password does not match!");
     }
     else{
 
@@ -211,7 +212,7 @@ export default class UserProfile extends Component<{}> {
         loading: true
       }, ()=>{
 
-          UserActions.register(this.state);
+          UserActions.updateProfile(this.state);
 
         //   {
         //     email: this.state.email,
@@ -307,59 +308,11 @@ export default class UserProfile extends Component<{}> {
           </View>
 
 
-
-          <Text style={styles.divTxt}>Account details</Text>
-
-          <TextInput
-            style={styles.txtInput}
-            onChangeText={(text) => this.setState({email:text})}
-            placeholder="Email"
-            placeholderTextColor="#A9ACBC"
-            ref={component => this.email = component}
-            underlineColorAndroid='transparent'
-            keyboardType="email-address"
-          />
-
-           <View style={styles.divider}></View>
-
-           <TextInput
-             style={styles.txtInput}
-             onChangeText={(text) => this.setState({password:text})}
-             placeholder="Password"
-             placeholderTextColor="#A9ACBC"
-             ref={component => this.password = component}
-             underlineColorAndroid='transparent'
-             secureTextEntry= {true}
-           />
-
-            <View style={styles.divider}></View>
-
-            <TextInput
-              style={styles.txtInput}
-              onChangeText={(text) => this.setState({confirmPassword:text})}
-              placeholder="Confirm Password"
-              placeholderTextColor="#A9ACBC"
-              ref={component => this.confirmPassword = component}
-              underlineColorAndroid='transparent'
-              secureTextEntry= {true}
-            />
-
-             <View style={styles.divider}></View>
-
-             <TextInput
-               style={styles.txtInput}
-               onChangeText={(text) => this.setState({username:text})}
-               placeholder="Username"
-               placeholderTextColor="#A9ACBC"
-               ref={component => this.username = component}
-               underlineColorAndroid='transparent'
-             />
-
             <PersonalDetails first_name={this.state.first_name} last_name={this.state.last_name} contact={this.state.contact} handleInputChange={this.handleInputChange}/>
 
 
             <TouchableHighlight underlayColor='#AA9BFC'  onPress={()=>this.doSave()} style={styles.btnUpdate}>
-              <Text style={{color: '#FFFFFF'}}>Create Account</Text>
+              <Text style={{color: '#FFFFFF'}}>Update Account</Text>
             </TouchableHighlight>
 
         </ScrollView>

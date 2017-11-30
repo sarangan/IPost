@@ -4,19 +4,30 @@ import dispatcher from "../dispatcher";
 class UserStore extends EventEmitter {
   constructor() {
     super();
-    this.user = {};
+    this.data = {};
+    this.userUpdate = {}
   }
 
-  getUser() {
-    return this.user;
+  getRegisterStatus() {
+    return this.data;
+  }
+
+  getUpdateProfileStatus() {
+    return this.data;
   }
 
   handleActions(action) {
 
     switch(action.type) {
 
-      case "GET_USER": {
-        this.user = action.data.user;
+      case "USER_REGISTER": {
+        this.data = action.data;
+        this.emit("change");
+        break;
+      }
+
+      case "UPDATE_USER": {
+        this.userUpdate = action.data;
         this.emit("change");
         break;
       }

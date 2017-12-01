@@ -150,7 +150,7 @@ export default class UserProfile extends Component<{}> {
 
    if( responseJson.hasOwnProperty("status") && responseJson.status == 1 ){
 
-     this.doMessage("I-Post Account successfully created", "INFO");
+     this.doMessage("Brahmi Account successfully created", "INFO");
 
      this.setState({
        loading: false,
@@ -169,7 +169,7 @@ export default class UserProfile extends Component<{}> {
      }, ()=>{
 
        Alert.alert(
-         'I-Post',
+         'Brahmi',
          'Success!, Please login to post a text.',
          [
            {text: 'OK', onPress: () => {

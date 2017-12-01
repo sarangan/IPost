@@ -13,7 +13,7 @@ class UserStore extends EventEmitter {
   }
 
   getUpdateProfileStatus() {
-    return this.data;
+    return this.userUpdate;
   }
 
   handleActions(action) {

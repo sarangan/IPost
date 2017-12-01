@@ -26,12 +26,12 @@ var MessageBarManager = require('react-native-message-bar').MessageBarManager;
 
 
 var ImagePicker = require('react-native-image-picker');
-import config from '../config/config';
 import PersonalDetails from "../components/PersonalDetails";
-
 import * as UserActions from "../actions/UserActions";
 import UserStore from "../stores/UserStore";
 
+import config from '../config/config';
+import AppKeys from '../keys/appKeys';
 import auth from '../auth/auth';
 
 export default class EditProfile extends Component<{}> {
@@ -105,19 +105,20 @@ export default class EditProfile extends Component<{}> {
   }
 
   // check register user status response
-  getRegisterStatus(){
+  getUpdateProfileStatus(){
 
    let responseJson = UserStore.getUpdateProfileStatus();
 
+   console.log(responseJson);
+
    if( responseJson.hasOwnProperty("status") && responseJson.status == 1 ){
 
-     this.doMessage("I-Post profile successfully updated", "INFO");
+     this.doMessage("Profile successfully updated", "INFO");
 
      this.setState({
        loading: false,
        img_url: '',
        got_img: 0,
-       loading: false,
        error: ''
 
      }, ()=>{
@@ -134,51 +135,41 @@ export default class EditProfile extends Component<{}> {
            let tempAuth = JSON.parse(result) || {};
 
            if(tempAuth.hasOwnProperty("user") && tempAuth.hasOwnProperty("token") ){
-             auth["AUTHTOKEN"] = tempAuth.token;
-             auth["ISLOGIN"] =  true;
-             auth["USER"] =  tempAuth.user;
 
-             console.log('auth');
-             console.log(auth);
+             if(responseJson.hasOwnProperty("user")){
+               let temp_user = responseJson.user;
+               if(Array.isArray(responseJson.user)){
+                 temp_user = responseJson.user[0]; // something the sails send array as updated values
+               }
 
-             let userDetails = {
-                 user_id : tempAuth.user.id,
-                 email :  tempAuth.user.email,
-                 img_url : config.SERVER_IMAGE_PATH + 'users/'+ responseJson.user.img_url,
-                 thumb_url: config.SERVER_IMAGE_PATH + 'users/300_'+ responseJson.user.img_url,
-                 first_name : responseJson.user.first_name,
-                 last_name : responseJson.user.last_name,
-                 contact : responseJson.user.contact,
-             };
+               let userDetails = {
+                   user_id : tempAuth.user.id,
+                   email :  tempAuth.user.email,
+                   img_url : config.SERVER_IMAGE_PATH + 'users/'+ responseJson.user.img_url,
+                   thumb_url: config.SERVER_IMAGE_PATH + 'users/300_'+ responseJson.user.img_url,
+                   first_name : temp_user.first_name,
+                   last_name : temp_user.last_name,
+                   contact : temp_user.contact,
+               };
 
-             auth["AUTHTOKEN"] = 'Bearer ' + responseJson.token;
-             auth["ISLOGIN"] =  true;
-             auth["USER"] =  userDetails;
+               auth["USER"] =  userDetails;
 
-             let ipauth = {
-               token: 'Bearer ' + responseJson.token,
-               isLogin: true,
-               user: userDetails
-             };
+               let ipauth = {
+                 token: tempAuth.token,
+                 isLogin: true,
+                 user: userDetails
+               };
+               console.log("ipauth");
+               console.log(ipauth);
 
-             console.log("ipauth");
-             console.log(ipauth);
+               AsyncStorage.setItem(AppKeys.LOGINKEY, JSON.stringify(ipauth), () => {
+                 console.log('login token stored');
 
 
-             AsyncStorage.setItem(AppKeys.LOGINKEY, JSON.stringify(ipauth), () => {
-               console.log('login token stored');
-
-               this.setState({
-                 isSending: false
                });
 
-               this.props.navigator.dismissModal({
-                 animationType: 'slide-down'
-               });
 
-             });
-
-
+             }
 
            }
          }
@@ -195,6 +186,9 @@ export default class EditProfile extends Component<{}> {
    }
    else{
        this.doMessage("Could not update the details!", "ERROR");
+       this.setState({
+         loading: false,
+       });
    }
 
 
@@ -213,23 +207,6 @@ export default class EditProfile extends Component<{}> {
       }, ()=>{
 
           UserActions.updateProfile(this.state);
-
-        //   {
-        //     email: this.state.email,
-        //     password: this.state.password,
-        //     confirmPassword: this.state.confirmPassword,
-        //     username: this.state.username,
-        //
-        //   }
-        // formData.append("", );
-        // formData.append("", );
-        // formData.append("", );
-        // formData.append("", );
-        // formData.append("first_name", this.state.first_name);
-        // formData.append("last_name", this.state.last_name);
-        // formData.append("contact", this.state.contact);
-        // formData.append("got_img", this.state.got_img);
-
 
       });
 

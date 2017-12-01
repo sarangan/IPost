@@ -47,7 +47,7 @@ export default class About extends Component{
                 <View style={styles.content}>
                   <ScrollView>
                     <Text style={styles.txt}>
-                      I-Post enables users to post what they feel like to share with other people around the world. This is the first social enabled application meant to connect humans and aliens. 
+                      Brahmi enables users to post what they feel like to share with other people around the world. This is the first social enabled application meant to connect humans and aliens. 
                     </Text>
                     <Text style={styles.subTxt}>
                       An app by <Text style={styles.linkTxt}>Sarangan.</Text>

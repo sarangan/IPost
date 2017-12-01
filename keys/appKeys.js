@@ -1,6 +1,7 @@
 
 let appkeys = {
-  LOGINKEY : "IPOSTLOGIN"
+  LOGINKEY : "IPOSTLOGIN",
+  SHOWGUIDE : "1",
 }
 
 module.exports = appkeys;

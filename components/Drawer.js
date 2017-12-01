@@ -11,7 +11,8 @@ import {
   StyleSheet,
   Dimensions,
 	Linking,
-  AsyncStorage
+  AsyncStorage,
+	Alert
 } from 'react-native';
 
 import {homeNavigator} from '../pages/Home';
@@ -64,12 +65,12 @@ export default class Drawer extends Component {
 					action: 'http://www.google.com',
 					icon: require('../images/menu_lock.png')
         },
-				// {
-        //   name: 'Help',
-        //   type: 'PAGE',
-				// 	action: 'HELP',
-				// 	icon: require('../images/menu_question.png')
-        // },
+				{
+          name: 'Help',
+          type: 'PAGE',
+					action: 'HELP',
+					icon: require('../images/menu_question.png')
+        },
         {
           name: 'Contact us',
           type: 'MAIL',
@@ -111,7 +112,7 @@ export default class Drawer extends Component {
 		else if(menu.type == "MAIL"){
 
 			this._toggleDrawer();
-			let url = encodeURI("mailto:sarangan12@gmail.com?subject=I-Post");
+			let url = encodeURI("mailto:sarangan12@gmail.com?subject=Brahmi");
 
 			Linking.openURL(url).catch(err => console.error('An error occurred', err));
 
@@ -124,7 +125,7 @@ export default class Drawer extends Component {
 	        title: 'Profile',
 	        animated: true,
 	        //animationType: 'fade',
-	        passProps: { user_id: auth.USER.user_id},
+	        passProps: { user_id: auth.USER.id},
 	      });
 
 			}
@@ -174,11 +175,11 @@ export default class Drawer extends Component {
     else if(menu.type == "ACTION"){
 
         Alert.alert(
-            'I-Post',
+            'Brahmi',
             'Do you want to logout?',
             [
-              {text: 'Cancel', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
-              {text: 'YES', onPress: () =>{
+              {text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+              {text: 'Yes', onPress: () =>{
 
                 let keys = [AppKeys.LOGINKEY];
                 AsyncStorage.multiRemove(keys, (err) => {
@@ -188,7 +189,7 @@ export default class Drawer extends Component {
 
                   this.props.navigator.showModal({
                       screen: "IPost.Login",
-                      title: 'IPost',
+                      title: 'Brahmi',
                       animationType: 'slide-up',
                       navigatorStyle:{
                         navBarHidden: true,
@@ -227,11 +228,14 @@ export default class Drawer extends Component {
     );
   }
 
+
 	render() {
 
 		return (
 
         <View style={styles.container}>
+
+					
           <View style={styles.drawerList}>
 
             {

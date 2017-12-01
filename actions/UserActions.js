@@ -71,13 +71,14 @@ export function updateProfile({first_name, last_name, contact, got_img} ) {
                 'Content-Type': 'multipart/form-data',
                 'Origin': '',
                 'Host': 'propertyground.co.uk',
-                'timeout': 10 * 60
+                'timeout': 10 * 60,
+                'Authorization': auth.AUTHTOKEN
       },
       body: formData
   })
   .then((response) => response.json())
   .then((responseJson) => {
-
+    console.log('update user ');
     console.log(responseJson);
     dispatcher.dispatch({
       type: "UPDATE_USER",

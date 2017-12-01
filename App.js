@@ -13,6 +13,7 @@ import EditProfile from './pages/EditProfile';
 import About from './pages/About';
 import ImageLightBox from './components/ImageLightBox';
 import Drawer from './components/Drawer';
+import Guide from './pages/Guide';
 
 Navigation.registerComponent('IPost.Login', () => Login);
 Navigation.registerComponent('IPost.Home', () => Home);
@@ -23,6 +24,7 @@ Navigation.registerComponent('IPost.CreatePost', () => CreatePost);
 Navigation.registerComponent('IPost.ImageLightBox', ()=> ImageLightBox);
 Navigation.registerComponent('IPost.Drawer', () => Drawer);
 Navigation.registerComponent('IPost.About', () => About);
+Navigation.registerComponent('IPost.Guide', () => Guide);
 
 
 
@@ -51,7 +53,7 @@ const navigatorStyle = {
     screen: {
       screen: 'IPost.Home',
       animated: true,
-      title: 'I-Post',
+      title: 'Brahmi',
       navigatorStyle
     },
     drawer: {

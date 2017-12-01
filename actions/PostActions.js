@@ -124,3 +124,39 @@ export function getMyPosts(page=1, user_id){
   });
 
 }
+
+export function toggleLike(post_id) {
+
+    let formData = new FormData();
+    formData.append("post_id", post_id);
+
+    fetch(
+        config.ENDPOINT_URL + 'post/togglelike',
+        {
+        method: 'POST',
+        headers: {
+                  'Accept': 'application/json',
+                  'Content-Type': 'multipart/form-data',
+                  'Origin': '',
+                  'Host': 'propertyground.co.uk',
+                  'timeout': 10 * 60,
+                  'Authorization': auth.AUTHTOKEN
+        },
+        body: formData,
+
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log(responseJson);
+
+      dispatcher.dispatch({
+        type: "TOGGLE_LIKE",
+        data: responseJson
+      });
+
+    })
+    .catch((error) => {
+        console.error(error);
+    });
+
+}

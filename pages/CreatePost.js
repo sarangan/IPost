@@ -34,13 +34,12 @@ import * as PostActions from "../actions/PostActions";
 import PostStore from "../stores/PostStore";
 
 
-
 export default class CreatePost extends Component<{}> {
 
   static navigatorButtons = {
      rightButtons: [
        {
-         title: 'Cancel',
+         title: 'Close',
          id: 'cancel'
        }
      ],
@@ -94,7 +93,7 @@ export default class CreatePost extends Component<{}> {
 
    let status = PostStore.getPostStatus();
 
-   if(status){ // is posted 
+   if(status){ // is posted
      this.setState({
        loading: false,
        body: '',
@@ -102,6 +101,7 @@ export default class CreatePost extends Component<{}> {
        img_url: ''
      }, ()=>{
        this.doMessage("Successfully posted", "INFO");
+       PostActions.getAllPosts();
      });
 
    }

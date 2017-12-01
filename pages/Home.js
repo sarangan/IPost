@@ -67,6 +67,7 @@ export default class Home extends Component<{}> {
     };
 
     this.getPosts = this.getPosts.bind(this);
+    this.getToggleLikeStatus = this.getToggleLikeStatus.bind(this); // to toggle like
 
   }
 
@@ -105,12 +106,43 @@ export default class Home extends Component<{}> {
     // AsyncStorage.multiRemove(keys, (err) => {
     //
     // });
-    this.checkAuth();
+
+    AsyncStorage.getItem(AppKeys.SHOWGUIDE, (err, result) => {
+      console.log('show guide');
+      console.log(result);
+      if(result){
+        //user already saw it
+        this.checkAuth();
+      }
+      else{
+        this.checkAuth();
+        this.showGuide();
+      }
+    });
+
+
+
     PostStore.on("change", this.getPosts);
+    PostStore.on("change", this.getToggleLikeStatus);
+
   }
 
   componentWillUnmount () {
     PostStore.removeListener("change", this.getPosts);
+    PostStore.removeListener("change", this.getToggleLikeStatus);
+  }
+
+  showGuide = () =>{
+
+    this.props.navigator.showModal({
+       screen: "IPost.Guide",
+       title: '',
+       animationType: 'slide-up',
+       navigatorStyle:{
+         navBarHidden: true,
+       },
+   });
+
   }
 
 
@@ -148,7 +180,7 @@ export default class Home extends Component<{}> {
 
          this.props.navigator.showModal({
              screen: "IPost.Login",
-             title: 'IPost',
+             title: 'Brahmi',
              animationType: 'slide-up',
              navigatorStyle:{
                navBarHidden: true,
@@ -165,7 +197,7 @@ export default class Home extends Component<{}> {
 
        this.props.navigator.showModal({
            screen: "IPost.Login",
-           title: 'IPost',
+           title: 'Brahmi',
            animationType: 'slide-up',
            navigatorStyle:{
              navBarHidden: true,
@@ -189,17 +221,51 @@ export default class Home extends Component<{}> {
 
     this.setState({
       loading: false,
-      posts: this.state.page === 1 ? posts : [...this.state.posts, ...responseJson.posts],
+      posts: this.state.page === 1 ? posts : [...this.state.posts, ...responseJson.posts], // concat posts when doing pagination
       totalRecords: posts.length
+    });
+
+  }
+  else{
+    this.setState({
+      loading: false,
     });
 
   }
 
  }
 
+  //listing toggle like
+  getToggleLikeStatus(){
+    let status = PostStore.getToggleLikeStatus();
+    console.log('status toggle success');
+
+
+    if(status){
+      let posts = this.state.posts;
+      let post_id = PostStore.getPostId();
+      console.log('post id', post_id);
+
+      for(let i=0 , l = posts.length; i < l; i++){
+        if(post_id == posts[i].post_id){
+          //this this object to toggle
+          let post_like = posts[i].ilike;
+          posts[i].ilike =  (post_like == 1 ? 0 : 1);
+          posts[i].count_likes =  (post_like == 1 ? (Number(posts[i].count_likes) - 1) : (Number(posts[i].count_likes) + 1) );
+          console.log('my ost id', posts[i].post_id);
+          break;
+        }
+      }
+
+      this.setState({
+        posts
+      })
+
+    }
+
+  }
+
   addPost = () => {
-
-
 
     this.props.navigator.showModal({
         screen: "IPost.CreatePost",
@@ -222,6 +288,27 @@ export default class Home extends Component<{}> {
 
   }
 
+
+  // get likes
+  getLikes = (item) =>{
+
+    let heart = <Image style={ styles.heart_icon } source={require('../images/nolike.png')} />
+
+    //check whether i like the post or not
+    if(item.ilike > 0){
+      heart =  <Image style={ styles.heart_icon } source={require('../images/liked.png')} />
+    }
+
+    return heart;
+
+  }
+
+  togglelike = (item) =>{
+
+    PostActions.toggleLike(item.post_id);
+  }
+
+  //image light box
   openLightBox = (img) =>{
 
     this.props.navigator.showLightBox({
@@ -390,8 +477,13 @@ export default class Home extends Component<{}> {
 
           <View style={styles.actionwrapper}>
 
-
-  				</View>
+            {item.count_likes > 0 &&
+              <Text style={{color: '#8EABF5'}}> {item.count_likes} likes</Text>
+            }
+            <TouchableHighlight underlayColor="transparent" onPress={()=>this.togglelike(item)} >
+              {this.getLikes(item)}
+            </TouchableHighlight>
+          </View>
 
   			</View>
 
@@ -490,74 +582,78 @@ const styles = StyleSheet.create({
    justifyContent: 'flex-start',
    flexDirection: 'row'
  },
- body: {
-   flex: 9,
- },
-header_item: {
- paddingLeft: 10,
- paddingRight: 5,
- justifyContent: 'flex-start',
-  flex: 1
-},
-header_text: {
- color: '#64696F',
-  fontSize: 15,
-  //lineHeight: 14,
-  flex: 0,
-  height: 20
-},
-header_text_symbol: {
-  fontSize: 15,
-  color: '#64696F',
-  textAlignVertical: 'center',
-  lineHeight: 15,
-  paddingLeft: 5,
-  marginLeft: 3
-},
-header_text_sub: {
-  marginLeft: 3,
-  fontSize: 14,
-  color: '#93A3E0',
-},
-usericon:{
-  width: 40,
-  height: 40,
-  borderRadius: 20,
-  marginLeft: 10,
-  //resizeMode: 'contain'
-},
-header_data_text:{
-  color: '#9E9E9E',
-  fontSize: 10,
-},
-news_item_text: {
- color: '#9E9E9E',
- fontSize: 13,
- paddingTop: 10,
- paddingBottom: 20,
- paddingRight: 5,
- paddingLeft: 5
-},
-divider: {
-  flex: 1,
-  height: 1,
-  backgroundColor: '#EEEEEE',
-  marginBottom: 10
-},
-actionwrapper:{
-  flex: 1,
-  justifyContent: 'flex-end',
-  alignItems: 'center',
-  flexDirection: 'row',
-  marginBottom: 10,
-  paddingLeft: 10,
-  paddingRight: 10
-},
-bodyImage:{
-  width: SCREENWIDTH,
-  height: SCREENWIDTH * 0.75,
-  flex: 1,
-  //resizeMode: 'cover',
-}
+   body: {
+     flex: 9,
+   },
+  header_item: {
+   paddingLeft: 10,
+   paddingRight: 5,
+   justifyContent: 'flex-start',
+    flex: 1
+  },
+  header_text: {
+   color: '#64696F',
+    fontSize: 15,
+    //lineHeight: 14,
+    flex: 0,
+    height: 20
+  },
+  header_text_symbol: {
+    fontSize: 15,
+    color: '#64696F',
+    textAlignVertical: 'center',
+    lineHeight: 15,
+    paddingLeft: 5,
+    marginLeft: 3
+  },
+  header_text_sub: {
+    marginLeft: 3,
+    fontSize: 14,
+    color: '#93A3E0',
+  },
+  usericon:{
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginLeft: 10,
+    //resizeMode: 'contain'
+  },
+  header_data_text:{
+    color: '#9E9E9E',
+    fontSize: 10,
+  },
+  news_item_text: {
+   color: '#9E9E9E',
+   fontSize: 14,
+   paddingTop: 2,
+   paddingBottom: 20,
+   paddingRight: 5,
+   paddingLeft: 5
+  },
+  divider: {
+    flex: 1,
+    height: 1,
+    backgroundColor: '#EEEEEE',
+    marginBottom: 10
+  },
+  actionwrapper:{
+    flex: 1,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    marginBottom: 10,
+    marginTop: 10,
+    paddingLeft: 10,
+    paddingRight: 10
+  },
+  bodyImage:{
+    width: SCREENWIDTH,
+    height: SCREENWIDTH * 0.75,
+    flex: 1,
+  },
+  heart_icon:{
+    width: 30,
+    height: 30,
+  }
 
 });

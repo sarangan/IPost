@@ -77,8 +77,6 @@ export default class Profile extends Component<{}> {
  getMyPosts(){
 
   let {posts, user} = PostStore.getMyPosts();
-
-  if(posts.length > 0){ //get all posts
     console.log(posts);
     console.log(user);
 
@@ -89,7 +87,7 @@ export default class Profile extends Component<{}> {
       user: user
     });
 
-  }
+
 
  }
 

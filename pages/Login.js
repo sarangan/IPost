@@ -54,7 +54,7 @@ export default class Login extends Component<{}> {
   }
 
 
-  // login response 
+  // login response
   getLoginStatus(){
 
     let responseJson = LoginStore.getLoginDetails();
@@ -64,7 +64,7 @@ export default class Login extends Component<{}> {
     if( keys.indexOf( ("token").toUpperCase() )  != -1 ){
 
       let userDetails = {
-          user_id : responseJson.user.id,
+          id : responseJson.user.id,
           email :  responseJson.user.email,
           img_url : config.SERVER_IMAGE_PATH + 'users/'+ responseJson.user.img_url,
           thumb_url: config.SERVER_IMAGE_PATH + 'users/300_'+ responseJson.user.img_url,
@@ -152,7 +152,7 @@ export default class Login extends Component<{}> {
     }
     else{
         Alert.alert(
-         'I-Post',
+         'Brahmi',
          'Username or password cannot be blank!'
         );
     }
@@ -167,8 +167,8 @@ export default class Login extends Component<{}> {
           <View style={styles.fill}>
 
                 <Image source={require('../images/ipost_logo.png')} style={styles.ip_logo}/>
-                <Text style={styles.inventoryTxt}>I-Post</Text>
-                <Text style={styles.helpTxt}>I-Post Login</Text>
+                <Text style={styles.inventoryTxt}>Brahmi</Text>
+                <Text style={styles.helpTxt}>Brahmi Login</Text>
                 <TextInput
                   style={styles.txtInput}
                   onChangeText={(text) => this.setState({username:text})}

@@ -268,7 +268,7 @@ export default class EditProfile extends Component<{}> {
   render() {
     return (
       <View style={styles.fill}>
-        <ScrollView>
+        <ScrollView contentContainerStyle={{paddingBottom: 60}}>
 
 
           <View style={{ flex: 1 , alignItems: 'center', justifyContent: 'center', marginTop: 20, marginBottom: 20}}>
@@ -312,7 +312,8 @@ const styles = StyleSheet.create({
   fill:{
     flex: 1,
     justifyContent: 'flex-start',
-    alignItems: 'center'
+    alignItems: 'center',
+    backgroundColor: '#ffffff'
   },
   divTxt:{
     backgroundColor: "#F7F7F9",
@@ -372,8 +373,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
-    right: -15,
-    bottom: 7
+    right: 0,
+    bottom: 0
   },
   camera_icon_img:{
     width: 22,

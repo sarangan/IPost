@@ -94,19 +94,22 @@ export default class Profile extends Component<{}> {
 
   openLightBox = (img) =>{
 
-    this.props.navigator.showLightBox({
-      screen: "IPost.ImageLightBox",
+    this.props.navigator.showModal({
+        screen: "IPost.ImageLightBox",
+        title: "",
+        animationType: 'slide-up',
+        navigatorStyle:{
+          navBarTextColor: '#6875E4',
+          navBarButtonColor: '#6875E4',
+          navBarBackgroundColor: '#333333',//'#839BF0',
+          screenBackgroundColor: '#FFFFFF',
+          navBarBlur: false,
+          screenBackgroundColor: '#FFFFFF',
+          navBarTransparent: false,
+       },
         passProps: {
-          imagePath: img,
-          images: JSON.stringify([img]),
-          index: 0
+           imagePath: img,
         },
-        style: {
-         backgroundBlur: "dark",
-          //backgroundColor: "#ff000080",
-          backgroundColor: "#333333",
-          tapBackgroundToDismiss: true
-       }
     });
 
   }
@@ -360,13 +363,14 @@ export default class Profile extends Component<{}> {
               <View key="background">
                 <Image style={{
                   width: SCREENWIDTH,
-                  height: PARALLAX_HEADER_HEIGHT }} source={require('../images/blur.jpg')} />
+                  height: PARALLAX_HEADER_HEIGHT }} source={require('../images/rain.jpg')} />
 
                 <View style={{position: 'absolute',
                               top: 0,
                               width: SCREENWIDTH,
                               backgroundColor: 'rgba(0,0,0,.4)',
                               height: PARALLAX_HEADER_HEIGHT}}/>
+
               </View>
 
             )}
@@ -385,10 +389,11 @@ export default class Profile extends Component<{}> {
               </View>
             )}
 
+
             renderStickyHeader={() => (
               <View key="sticky-header" style={styles.stickySection}>
                 {this.getProfileStickyAvatar()}
-                 <Text style={styles.stickySectionText}>{this.getFullname()}</Text>
+                <Text style={{color: '#333333', marginLeft: 10}}>{this.getFullname()}</Text>
               </View>
             )}
 
@@ -557,10 +562,12 @@ actionwrapper:{
     color: '#ffffff',
   },
   stickySection:{
-    flex: 1,
-    flexDirection: 'row',
+    height: STICKY_HEADER_HEIGHT,
+    width: SCREENWIDTH,
+    justifyContent: 'flex-start',
     alignItems: 'baseline',
-    justifyContent: 'flex-start'
+    flexDirection: 'row',
+    backgroundColor: '#EFF0F1'
   },
   divTxt:{
     backgroundColor: "#F7F7F9",

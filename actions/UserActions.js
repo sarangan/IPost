@@ -50,7 +50,7 @@ export function register({email, password, confirmPassword, username, first_name
 
 }
 
-export function updateProfile({first_name, last_name, contact, got_img} ) {
+export function updateProfile({first_name, last_name, contact, got_img, img_url} ) {
 
   let formData = new FormData();
   formData.append("first_name", first_name);

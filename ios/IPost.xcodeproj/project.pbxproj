@@ -40,6 +40,8 @@
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		C03366C31FCC0C0F0022C562 /* libReactNativeNavigation.a in Frameworks */ = {isa = PBXBuildFile; fileRef = C03366C11FCC0B5B0022C562 /* libReactNativeNavigation.a */; };
 		C0549DB61FD0E4F70061A15A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = C0549DB41FD0E4F70061A15A /* LaunchScreen.xib */; };
+		C0549E0A1FD154F50061A15A /* QBImagePicker.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0549E0B1FD154F50061A15A /* QBImagePicker.framework */; };
+		C0549E451FD15CED0061A15A /* RSKImageCropper.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C0549E461FD15CED0061A15A /* RSKImageCropper.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -354,6 +356,9 @@
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		C03366A11FCC0B5B0022C562 /* ReactNativeNavigation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ReactNativeNavigation.xcodeproj; path = "../node_modules/react-native-navigation/ios/ReactNativeNavigation.xcodeproj"; sourceTree = "<group>"; };
 		C0549DB51FD0E4F70061A15A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = IPost/Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
+		C0549E0B1FD154F50061A15A /* QBImagePicker.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = QBImagePicker.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0549E0D1FD154FE0061A15A /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C0549E461FD15CED0061A15A /* RSKImageCropper.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = RSKImageCropper.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C0F0C33A1F404A069AD8F54E /* libRNImagePicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libRNImagePicker.a; sourceTree = "<group>"; };
 		EDDBB17393FB48748B384DEC /* libimageCropPicker.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = archive.ar; path = libimageCropPicker.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -371,6 +376,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C0549E451FD15CED0061A15A /* RSKImageCropper.framework in Frameworks */,
+				C0549E0A1FD154F50061A15A /* QBImagePicker.framework in Frameworks */,
 				C03366C31FCC0C0F0022C562 /* libReactNativeNavigation.a in Frameworks */,
 				ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */,
 				5E9157361DD0AC6A00FF2AA8 /* libRCTAnimation.a in Frameworks */,
@@ -624,6 +631,9 @@
 		C03366C21FCC0C0F0022C562 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C0549E461FD15CED0061A15A /* RSKImageCropper.framework */,
+				C0549E0D1FD154FE0061A15A /* RSKImageCropper.framework */,
+				C0549E0B1FD154F50061A15A /* QBImagePicker.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -739,6 +749,7 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
+						DevelopmentTeam = 8ZJE27Q4U4;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
@@ -1238,6 +1249,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				DEVELOPMENT_TEAM = 8ZJE27Q4U4;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -1260,7 +1272,7 @@
 					"-lc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IPost.app/IPost";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Brahmi.app/Brahmi";
 			};
 			name = Debug;
 		};
@@ -1269,6 +1281,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				DEVELOPMENT_TEAM = 8ZJE27Q4U4;
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../node_modules/react-native-image-picker/ios",
@@ -1287,7 +1300,7 @@
 					"-lc++",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/IPost.app/IPost";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Brahmi.app/Brahmi";
 			};
 			name = Release;
 		};
@@ -1295,6 +1308,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
 				DEVELOPMENT_TEAM = 8ZJE27Q4U4;
@@ -1323,6 +1337,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8ZJE27Q4U4;
 				ENABLE_BITCODE = NO;

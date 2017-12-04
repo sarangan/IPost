@@ -234,12 +234,12 @@ export default class CreatePost extends Component<{}> {
         <ScrollView>
 
           <TextInput
-            style={[styles.txtInput, {height: SCREENHEIGHT - 400}]}
+            style={[styles.txtInput, {height: 150, textAlignVertical: "top"}]}
             onChangeText={(text) => this.setState({body:text})}
             placeholder="What are you thinking about?"
             placeholderTextColor="#A9ACBC"
             multiline = {true}
-            numberOfLines = {10}
+            numberOfLines = {5}
             value={this.state.body}
             underlineColorAndroid='transparent'
           />
@@ -299,7 +299,7 @@ const styles = StyleSheet.create({
   fill:{
     flex: 1,
     justifyContent: 'flex-start',
-    alignItems: 'center'
+    alignItems: 'flex-start'
   },
   divTxt:{
     backgroundColor: "#F7F7F9",
@@ -307,13 +307,16 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   txtInput:{
-    height: 45,
     paddingLeft: 10,
     paddingRight: 10,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#ffffff',
     width: SCREENWIDTH - 10,
     marginTop: 10,
     fontSize: 15,
+    alignSelf: 'flex-start',
+    alignContent: 'flex-start',
+    justifyContent: 'flex-start',
+    alignItems: 'flex-start'
   },
   divider:{
     marginLeft: 25,

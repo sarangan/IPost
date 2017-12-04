@@ -311,20 +311,40 @@ export default class Home extends Component<{}> {
   //image light box
   openLightBox = (img) =>{
 
-    this.props.navigator.showLightBox({
-      screen: "IPost.ImageLightBox",
+    // this.props.navigator.showLightBox({
+    //   screen: "IPost.ImageLightBox",
+    //     passProps: {
+    //       imagePath: img,
+    //       images: JSON.stringify([img]),
+    //       index: 0
+    //     },
+    //     style: {
+    //      backgroundBlur: "dark",
+    //       //backgroundColor: "#ff000080",
+    //       backgroundColor: "#333333",
+    //       tapBackgroundToDismiss: true
+    //    }
+    // });
+
+    this.props.navigator.showModal({
+        screen: "IPost.ImageLightBox",
+        title: "",
+        animationType: 'slide-up',
+        navigatorStyle:{
+          navBarTextColor: '#6875E4',
+          navBarButtonColor: '#6875E4',
+          navBarBackgroundColor: '#333333',//'#839BF0',
+          screenBackgroundColor: '#FFFFFF',
+          navBarBlur: false,
+          screenBackgroundColor: '#FFFFFF',
+          navBarTransparent: false,
+       },
         passProps: {
-          imagePath: img,
-          images: JSON.stringify([img]),
-          index: 0
+           imagePath: img,
         },
-        style: {
-         backgroundBlur: "dark",
-          //backgroundColor: "#ff000080",
-          backgroundColor: "#333333",
-          tapBackgroundToDismiss: true
-       }
     });
+
+
 
   }
 
@@ -408,6 +428,36 @@ export default class Home extends Component<{}> {
 
  }
 
+
+ //ref stackoverflow
+ timeSince = (date) => {
+
+  var seconds = Math.floor((new Date() - new Date(date) ) / 1000);
+
+  var interval = Math.floor(seconds / 31536000);
+
+  if (interval > 1) {
+    return interval + " years ago";
+  }
+  interval = Math.floor(seconds / 2592000);
+  if (interval > 1) {
+    return interval + " months ago";
+  }
+  interval = Math.floor(seconds / 86400);
+  if (interval > 1) {
+    return interval + " days ago";
+  }
+  interval = Math.floor(seconds / 3600);
+  if (interval > 1) {
+    return interval + " hours ago";
+  }
+  interval = Math.floor(seconds / 60);
+  if (interval > 1) {
+    return interval + " minutes ago";
+  }
+  return Math.floor(seconds) + " seconds ago";
+}
+
  renderEmptyData = () =>{
     return(
       <View style={{ flex: 1, width: SCREENWIDTH,  alignContent:'center', alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }} >
@@ -447,7 +497,7 @@ export default class Home extends Component<{}> {
   						      <Text style={styles.header_text} numberOfLines={1} onPress={()=>this.openProfile(item.user_id)}>{this.getTitle(item)} <Text style={styles.header_text_symbol} numberOfLines={1}>▸</Text>
                       <Text style={styles.header_text_sub} numberOfLines={1}>{item.username}</Text>
                     </Text>
-                    <Text style={styles.header_data_text} numberOfLines={1}>{item.postdate}</Text>
+                    <Text style={styles.header_data_text} numberOfLines={1}>{this.timeSince(item.createdAt)}</Text>
   					  </View>
 
   				</View>
@@ -479,6 +529,9 @@ export default class Home extends Component<{}> {
 
             {item.count_likes > 0 &&
               <Text style={{color: '#8EABF5'}}> {item.count_likes} likes</Text>
+            }
+            {item.count_likes == 0 &&
+              <Text style={{padding: 1}}></Text>
             }
             <TouchableHighlight underlayColor="transparent" onPress={()=>this.togglelike(item)} >
               {this.getLikes(item)}

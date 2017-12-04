@@ -224,6 +224,7 @@ const styles = StyleSheet.create({
    paddingTop: 30,
    paddingBottom: 30,
    backgroundColor: '#FFFFFF',
+   height: SCREENHEIGHT
  },
  txtInput: {
    height: 40,

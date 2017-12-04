@@ -15,129 +15,84 @@ import {
 } from 'react-native';
 
 import TImage from 'react-native-transformable-image';
-import Swiper from 'react-native-swiper';
+// import Swiper from 'react-native-swiper';
+//import Simage from "./Simage";
 
 const SCREENWIDTH = Dimensions.get('window').width;
 const SCREENHEIGHT = Dimensions.get('window').height;
 
-
-export default class ImageLightBox extends Component {
+export default class ImageLightBox extends  Component<{}> {
+  static navigatorButtons = {
+    rightButtons: [
+     {
+       icon: require('../images/share_img.png'),
+       id: 'share'
+     }
+   ],
+   };
 
   constructor(props){
     super(props);
+    this.props.navigator.setOnNavigatorEvent(this.onNavigatorEvent.bind(this));
     this.state ={
-      images: JSON.parse(this.props.images),
-      index: this.props.index? this.props.index: 0,
-      pageIndex: this.props.index? this.props.index: 0,
+      // images: JSON.parse(this.props.images),
+      // index: this.props.index? this.props.index: 0,
+      // pageIndex: this.props.index? this.props.index: 0,
     };
 
-    console.log(JSON.parse(this.props.images));
+
   }
 
-  //close the light box
-  dismissImgBox=()=>{
-    this.props.navigator.dismissLightBox();
+  onNavigatorEvent(event) {
+    if (event.type == 'NavBarButtonPress') {
+      if(event.id == 'cancel'){
+
+        this.props.navigator.dismissModal({
+          animationType: 'slide-down'
+        });
+
+      }
+      else if(event.id == 'share'){
+        this.shareImg();
+      }
+
+    }
   }
+
 
   //share image
   shareImg=()=>{
 
-    this.props.navigator.dismissLightBox();
-
-    let img = this.state.images[this.state.pageIndex];
 
     Share.share({
-      message: 'Shared via PropertyGround',
-      title: 'PropertyGround',
-      url: img
+      message: 'Shared via Brahmi',
+      title: 'Snappar',
+      url: this.props.imagePath
     }, {
-      dialogTitle: 'PropertyGround - Share image',
+      dialogTitle: 'Brahmi - Share image',
     })
     .then(
         this._showResult
     )
     .catch(err => console.log(err))
 
-  }
-
-  //delete the image from stack
-  deleteImg = () =>{
-    //let img = this.state.images[this.state.pageIndex];
-
-    let images = this.state.images;
-    images.splice(this.state.pageIndex, 1);
-
-    this.props.delete(this.state.pageIndex);
-
-  };
-
-  getSlids =() =>{
-
-    let slides= [];
-
-    for(let i=0, l = this.state.images.length; i < l ; i++){
-      let img = this.state.images[i];
-      slides.push(
-            <View style={styles.container} key={i}>
-
-              <TImage
-                source={{ uri: img}}
-                style={{width:  SCREENWIDTH - 50, height:  SCREENHEIGHT - 100, }}
-              >
-              </TImage>
-
-            </View>
-        );
-
-    }
-
-    return slides;
 
   }
 
-  onSwipe = (index) => {
-    console.log('index changed', index);
-  }
 
 
   render() {
-    const config = {
-      velocityThreshold: 0.3,
-      directionalOffsetThreshold: 80
-    };
+
 
     return (
-      <View style={ [styles.container, { width: SCREENWIDTH, height: SCREENHEIGHT } ]}>
+      <View style={styles.container}>
 
-          <TouchableHighlight underlayColor="transparent" onPress={this.dismissImgBox} style={styles.actionCloseWrapper}>
-            <Image style={styles.actionCloseImg} source={require('../images/back.png')} />
-          </TouchableHighlight>
 
-          <TouchableHighlight underlayColor="transparent" onPress={()=>this.shareImg} style={styles.actionShareWrapper}>
-            <Image style={styles.actionShareImg} source={require('../images/share_img.png')} />
-          </TouchableHighlight>
-
-            <Swiper showsButtons={false} showsPagination={true}
-              dot={<View style={{backgroundColor: 'rgba(129,197,211,.2)', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
-              activeDot={<View style={{backgroundColor: '#ffffff', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
-              paginationStyle={{
-                bottom: '1%', left: '0%'
-              }}
-              loop={true}
-              index={this.state.index}
-              autoplay={true}
-              autoplayTimeout={12}
-              onMomentumScrollEnd={(event, state) => {
-              this.setState({
-                pageIndex: state.index,
-              });
-              console.log(state.index);
-            }}
-
-            >
-              {this.getSlids()}
-            </Swiper>
-
+            <TImage
+                          source={{ uri: this.props.imagePath}}
+                          style={{width:  SCREENWIDTH - 50, height:  SCREENHEIGHT - 100, }}
+                        >
+                        </TImage>
 
 
 
@@ -149,43 +104,11 @@ export default class ImageLightBox extends Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  imageWrapper:{
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 50
-  },
-  actionCloseWrapper:{
-    // position: 'absolute',
-    // right: 5,
-    // top: 25,
-    alignSelf: 'flex-start',
-    padding: 10,
-    marginTop: 15
-  },
-  actionCloseBtn:{
-    padding: 20,
-    color: '#FFFFFF',
-    fontSize: 12,
-  },
-  actionCloseImg:{
-    width: 30,
-    height: 30,
-  },
-  actionShareWrapper:{
-    position: 'absolute',
-    top: '1%',
-    right: '0%',
-    zIndex: 12,
-    padding: 20,
+    height: SCREENHEIGHT,
+    backgroundColor: '#333333'
+    //flexDirection: 'column',
   },
 
-  actionShareImg:{
-    width: 27,
-    height: 27,
-  }
 });

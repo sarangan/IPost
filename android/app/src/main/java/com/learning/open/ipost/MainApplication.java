@@ -29,6 +29,8 @@ public class MainApplication extends NavigationApplication {
         // No need to add RnnPackage and MainReactPackage
         return Arrays.<ReactPackage>asList(
             // eg. new VectorIconsPackage()
+            new PickerPackage(),
+            new ImagePickerPackage()
         );
     }
 
@@ -47,8 +49,7 @@ public class MainApplication extends NavigationApplication {
     //   protected List<ReactPackage> getPackages() {
     //     return Arrays.<ReactPackage>asList(
     //         new MainReactPackage(),
-            new PickerPackage(),
-            new ImagePickerPackage()
+
     //     );
     //   }
     //

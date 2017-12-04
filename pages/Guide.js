@@ -59,7 +59,7 @@ export default class Guide extends Component{
 
 
           <Swiper showsButtons={false} showsPagination={true}
-            dot={<View style={{backgroundColor: 'rgba(0,0,0,.2)', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
+            dot={<View style={{backgroundColor: 'rgba(255,255,255,.1)', width: 5, height: 5, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
             activeDot={<View style={{backgroundColor: '#FFFFFF', width: 8, height: 8, borderRadius: 4, marginLeft: 3, marginRight: 3, marginTop: 3, marginBottom: 3}} />}
             paginationStyle={{
               bottom: '20%', left: '0%'
@@ -105,7 +105,7 @@ export default class Guide extends Component{
 
 const styles = StyleSheet.create({
   content: {
-    backgroundColor: '#333333',
+    backgroundColor: 'rgb(131,155,240)',
     width: SCREENWIDTH,
     height: SCREENHEIGHT,
   },
